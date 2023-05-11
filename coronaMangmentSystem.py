@@ -29,26 +29,29 @@ def add_employee():
         city = request.json['city']
         street = request.json['street']
         s_number = request.json['s_number']
-        date_of_birth = "(to_date('" + request.json['date_of_birth'] + "', 'DD-MM-YYYY'))"
+        date_of_birth = request.json['date_of_birth']
         telephone = request.json['telephone']
         mobile = request.json['mobile']
-        vaccine1_date = "(to_date('" + request.json['vaccine1_date'] + "', 'DD-MM-YYYY'))"
+        vaccine1_date = request.json['vaccine1_date']
         vaccine1_manufacturer = request.json['vaccine1_manufacturer']
-        vaccine2_date = "(to_date('" + request.json['vaccine2_date'] + "', 'DD-MM-YYYY'))"
+        vaccine2_date = request.json['vaccine2_date']
         vaccine2_manufacturer = request.json['vaccine2_manufacturer']
-        vaccine3_date = "(to_date('" + request.json['vaccine3_date'] + "', 'DD-MM-YYYY'))"
+        vaccine3_date = request.json['vaccine3_date']
         vaccine3_manufacturer = request.json['vaccine3_manufacturer']
-        vaccine4_date = "(to_date('" + request.json['vaccine4_date'] + "', 'DD-MM-YYYY'))"
+        vaccine4_date = request.json['vaccine4_date']
         vaccine4_manufacturer = request.json['vaccine4_manufacturer']
-        positive_result_date = "(to_date('" + request.json['positive_result_date'] + "', 'DD-MM-YYYY'))"
-        recovery_date = "(to_date('" + request.json['recovery_date'] + "', 'DD-MM-YYYY'))"
-        print (vaccine1_date)
+        positive_result_date = request.json['positive_result_date']
+        recovery_date = request.json['recovery_date']
 
         with connection.cursor() as cur:
-            cur.execute(
-                "INSERT INTO employees (e_id,first_name, last_name, id_card, city, street, s_number, date_of_birth, telephone, mobile, vaccine1_date, vaccine1_manufacturer, vaccine2_date, vaccine2_manufacturer,vaccine3_date,vaccine3_manufacturer,vaccine4_date,vaccine4_manufacturer, positive_result_date, recovery_date) VALUES (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20)"
-                .format(e_id, first_name, last_name, id_card, city, street, s_number, date_of_birth, telephone, mobile, vaccine1_date, vaccine1_manufacturer, vaccine2_date, vaccine2_manufacturer, vaccine3_date, vaccine3_manufacturer, vaccine4_date, vaccine4_manufacturer, positive_result_date, recovery_date))
-        connection.commit()
+            sql = "INSERT INTO employees (e_id, first_name, last_name, id_card, city, street, s_number, date_of_birth, telephone, mobile, vaccine1_date, vaccine1_manufacturer, vaccine2_date, vaccine2_manufacturer, vaccine3_date, vaccine3_manufacturer, vaccine4_date, vaccine4_manufacturer, positive_result_date, recovery_date) VALUES (:1, :2, :3, :4, :5, :6, :7, TO_DATE(:8, 'YYYY-MM-DD'), :9, :10, TO_DATE(:11, 'YYYY-MM-DD'), :12, TO_DATE(:13, 'YYYY-MM-DD'), :14, TO_DATE(:15, 'YYYY-MM-DD'), :16, TO_DATE(:17, 'YYYY-MM-DD'), :18,TO_DATE(:19, 'YYYY-MM-DD'), TO_DATE(:20, 'YYYY-MM-DD'))"
+
+            values = [e_id, first_name, last_name, id_card, city, street, s_number, date_of_birth, telephone, mobile,
+                      vaccine1_date, vaccine1_manufacturer, vaccine2_date, vaccine2_manufacturer, vaccine3_date,
+                      vaccine3_manufacturer, vaccine4_date, vaccine4_manufacturer, positive_result_date, recovery_date]
+            cur.execute(sql,values)
+            connection.commit()
+
 
         return jsonify({'message': 'Employee added successfully.'})
         # existing code to get employee data and insert into the database
@@ -58,13 +61,14 @@ def add_employee():
         return "Error occurred while adding employee"
 
 
+
 if __name__ == '__main__':
     app.run(debug=True)
 
 """
 {
 
-    "e_id": "212591770",
+    "e_id": 212591770,
     "first_name": "John",
     "last_name": "Doe",
     "id_card": "123456789",
@@ -84,5 +88,7 @@ if __name__ == '__main__':
     "vaccine4_manufacturer": "Moderna",
     "positive_result_date": "04-01-2022",
     "recovery_date": "04-12-2022"
+    
+     
 }
 """
